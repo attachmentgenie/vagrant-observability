@@ -27,7 +27,6 @@ profiles::tracing::tempo::distributor_config_hash:
 profiles::tracing::tempo::ingester_config_hash:
   ingester:
     trace_idle_period: 10s               # the length of time after a trace has not received spans to consider it complete and flush it
-#    traces_per_block: 100                # cut the head block when it his this number of traces or ...
     max_block_duration: 5m               #   this much time passes
 profiles::tracing::tempo::server_config_hash:
   server:
@@ -38,8 +37,6 @@ profiles::tracing::tempo::storage_config_hash:
       backend: s3                     # backend configuration to use
       wal:
         path: /tmp/tempo/wal             # where to store the the wal locally
-#        bloom_filter_false_positive: .05 # bloom filter false positive rate.  lower values create larger filters but fewer false positives
-#        index_downsample: 10             # number of traces per index record
       s3:
         bucket: tempo
         endpoint: s3.observability.vagrant:9090

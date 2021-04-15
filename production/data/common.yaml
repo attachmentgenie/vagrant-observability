@@ -8,8 +8,8 @@ profiles::bootstrap::puppet::splaylimit: 180s
 profiles::bootstrap::repos: true
 #profiles::bootstrap::repositories::epel: true
 profiles::database::postgresql::manage_package_repo: true
-profiles::metrics::prometheus: true
-profiles::metrics::prometheus::scrape_configs:
+profiles::monitoring::prometheus: true
+profiles::monitoring::prometheus::scrape_configs:
   - job_name: prometheus
     scrape_interval: 30s
     scrape_timeout: 30s
@@ -21,7 +21,6 @@ profiles::metrics::prometheus::scrape_configs:
     scrape_timeout: 30s
     static_configs:
       - targets:
-          - node1.observability.vagrant:9100
           - metrics.observability.vagrant:9100
 profiles::monitoring::icinga2: true
 profiles::monitoring::icinga2::client: false
