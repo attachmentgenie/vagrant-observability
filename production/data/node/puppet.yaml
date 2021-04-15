@@ -1,0 +1,55 @@
+---
+classes:
+  - roles::puppetmaster
+profiles::bootstrap::puppet::autosign: '/etc/puppetlabs/puppet/autosign.conf'
+profiles::bootstrap::puppet::autosign_domains:
+  - '*.vagrant'
+profiles::bootstrap::puppet::hiera_yaml_datadir: "/etc/puppetlabs/code/environments/production/hieradata"
+profiles::bootstrap::puppet::server: true
+profiles::bootstrap::puppet::server_external_nodes: ''
+profiles::bootstrap::puppet::server_puppetdb_host: puppet.observability.vagrant
+profiles::bootstrap::puppet::server_storeconfigs_backend: 'puppetdb'
+profiles::database::postgresql: true
+profiles::metrics::grafana: true
+profiles::metrics::grafana::datasources:
+  Loki:
+    access_mode: proxy
+    grafana_url: 'http://%{::ipaddress_eth1}:3000'
+    grafana_user: admin
+    grafana_password: secret
+    is_default: false
+    type: loki
+    url: http://logs.observability.vagrant:3100
+  Prometheus:
+    access_mode: proxy
+    grafana_url: 'http://%{::ipaddress_eth1}:3000'
+    grafana_user: admin
+    grafana_password: secret
+    is_default: true
+    type: prometheus
+    url: http://metrics.observability.vagrant:9090
+  Tempo:
+    access_mode: proxy
+    grafana_url: 'http://%{::ipaddress_eth1}:3000'
+    grafana_user: admin
+    grafana_password: secret
+    is_default: false
+    type: tempo
+    url: http://traces.observability.vagrant:3100
+profiles::metrics::grafana::http_addr: '%{::ipaddress_eth1}'
+profiles::metrics::grafana::manage_repo: true
+profiles::orchestration::consul::config:
+  "addresses": {
+    "http": '%{::ipaddress_eth1}'
+  }
+  bootstrap_expect: 1
+  server: true
+  ui_config:
+    enabled: true
+    metrics_provider: "prometheus"
+    metrics_proxy:
+      base_url: "http://metrics.observability.vagrant:9090/"
+profiles::orchestration::consul::server: true
+profiles::orchestration::consul::ui: true
+profiles::puppet::puppetdb: true
+profiles::puppet::puppetmaster: true

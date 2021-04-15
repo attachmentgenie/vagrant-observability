@@ -1,0 +1,51 @@
+---
+classes:
+  - roles::logging
+profiles::logging::loki: true
+profiles::logging::loki::auth_enabled: false
+profiles::logging::loki::ingester_config_hash:
+  ingester:
+    lifecycler:
+      address: 127.0.0.1
+      ring:
+        kvstore:
+          store: inmemory
+        replication_factor: 1
+      final_sleep: 0s
+    chunk_idle_period: 5m
+    chunk_retain_period: 30s
+profiles::logging::loki::limits_config_hash:
+  limits_config:
+    enforce_metric_name: false
+    reject_old_samples: true
+    reject_old_samples_max_age: 168h
+profiles::logging::loki::device: '/dev/sdb'
+profiles::logging::loki::manage_disk: true
+profiles::logging::loki::schema_config_hash:
+  schema_config:
+    configs:
+      - from: '2020-05-15'
+        store: boltdb-shipper
+        object_store: aws
+        schema: v11
+        index:
+          prefix: index_
+          period: 24h
+profiles::logging::loki::server_config_hash:
+  server:
+    http_listen_port: 3100
+profiles::logging::loki::storage_config_hash:
+  compactor:
+    working_directory: /var/lib/loki/boltdb_shipper_compactor
+    shared_store: aws
+  storage_config:
+    boltdb_shipper:
+      active_index_directory: /var/lib/loki/index
+      cache_location: /var/lib/loki/index_cache
+      resync_interval: 5s
+      shared_store: aws
+    aws:
+      s3: 's3://admin:supersecret@s3.observability.vagrant:9090/loki'
+      region: us-east-1
+      s3forcepathstyle: true
+...

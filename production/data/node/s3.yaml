@@ -1,0 +1,9 @@
+---
+classes:
+  - roles::storage
+profiles::storage::minio: true
+profiles::storage::minio::device: '/dev/sdb'
+profiles::storage::minio::listen_address: '%{::ipaddress_eth1}'
+profiles::storage::minio::manage_disk: true
+profiles::monitoring::promtail: true
+...

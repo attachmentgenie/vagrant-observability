@@ -1,5 +1,48 @@
 ---
-classes:
-  - roles::node
 profiles::bootstrap::firewall: true
 profiles::bootstrap::firewall::ensure: stopped
+profiles::bootstrap::puppet: true
+profiles::bootstrap::puppet::puppetmaster: puppet.observability.vagrant
+profiles::bootstrap::puppet::runinterval: 180
+profiles::bootstrap::puppet::splaylimit: 180s
+profiles::bootstrap::repos: true
+#profiles::bootstrap::repositories::epel: true
+profiles::database::postgresql::manage_package_repo: true
+profiles::metrics::prometheus: true
+profiles::metrics::prometheus::scrape_configs:
+  - job_name: prometheus
+    scrape_interval: 30s
+    scrape_timeout: 30s
+    static_configs:
+      - targets:
+          - metrics.observability.vagrant:9090
+  - job_name: node_exporter
+    scrape_interval: 30s
+    scrape_timeout: 30s
+    static_configs:
+      - targets:
+          - node1.observability.vagrant:9100
+          - metrics.observability.vagrant:9100
+profiles::monitoring::icinga2: true
+profiles::monitoring::icinga2::client: false
+profiles::monitoring::icinga2::ipaddress: '%{::ipaddress_enp0s8}'
+profiles::monitoring::icinga2::manage_repo: true
+profiles::monitoring::icinga2::parent_endpoints:
+  'icinga.observability.vagrant':
+    host: 192.168.43.42
+profiles::monitoring::icinga2::vars:
+  disks:
+    'disk /':
+      disk_wfree: 10%
+      disk_cfree: 5%
+profiles::monitoring::promtail: true
+profiles::monitoring::promtail::client_url: http://logs.observability.vagrant:3100/loki/api/v1/push
+profiles::orchestration::consul: true
+profiles::orchestration::consul::config:
+  retry_join:
+    - puppet.observability.vagrant
+profiles::orchestration::consul::config_defaults:
+  advertise_addr: '%{::ipaddress_eth1}'
+  data_dir: /var/lib/consul
+  datacenter: lab
+...
