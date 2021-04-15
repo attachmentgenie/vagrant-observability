@@ -1,0 +1,5 @@
+---
+classes:
+  - roles::node
+profiles::bootstrap::firewall: true
+profiles::bootstrap::firewall::ensure: stopped
