@@ -15,13 +15,6 @@ profiles::mail::mailhog: true
 profiles::mail::mailhog::config: '-ui-bind-addr=0.0.0.0:8025 -api-bind-addr=0.0.0.0:8025'
 profiles::mail::mailhog::install_method: archive
 profiles::alerting::icingaweb2: true
-profiles::alerting::icingaweb2::modules:
-  - 'consul'
-  - 'director'
-  - 'incubator'
-  - 'ipl'
-  - 'reactbundle'
-profiles::alerting::icingaweb2::director::git_revision: 'd1832526a9f67a69b5e155302b7be9a57f588fa5'
 profiles::bootstrap::repositories::repositories:
   'centos-sclo-rh':
     baseurl: 'http://mirror.centos.org/centos/7/sclo/$basearch/rh/'
