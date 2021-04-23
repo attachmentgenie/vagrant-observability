@@ -78,4 +78,4 @@ profiles::website::apache::vhosts:
       <LocationMatch "^/icingaweb2/(.*\.php)$">
           ProxyPassMatch "fcgi://127.0.0.1:9000/usr/share/icingaweb2/public/$1"
         </LocationMatch>
-
+...

@@ -82,3 +82,6 @@
 [submodule "production/modules/mailhog"]
 	path = production/modules/mailhog
 	url = git@github.com:attachmentgenie/attachmentgenie-mailhog.git
+[submodule "production/modules/statping"]
+	path = production/modules/statping
+	url = git@github.com:attachmentgenie/attachmentgenie-statping.git

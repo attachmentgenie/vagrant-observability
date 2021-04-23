@@ -6,7 +6,6 @@ profiles::bootstrap::puppet::puppetmaster: puppet.observability.vagrant
 profiles::bootstrap::puppet::runinterval: 180
 profiles::bootstrap::puppet::splaylimit: 180s
 profiles::bootstrap::repos: true
-#profiles::bootstrap::repositories::epel: true
 profiles::database::postgresql::manage_package_repo: true
 profiles::monitoring::icinga2: true
 profiles::monitoring::icinga2::client: false
