@@ -1,7 +1,6 @@
 ---
 classes:
   - roles::metrics
-profiles::monitoring::prometheus: true
 profiles::monitoring::prometheus::server: true
 profiles::monitoring::prometheus::scrape_configs:
   - job_name: prometheus

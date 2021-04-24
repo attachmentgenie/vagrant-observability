@@ -19,6 +19,9 @@ profiles::monitoring::icinga2::vars:
     'disk /':
       disk_wfree: 10%
       disk_cfree: 5%
+profiles::monitoring::prometheus: true
+profiles::monitoring::prometheus::client: true
+profiles::monitoring::prometheus::manage_sd_service: true
 profiles::monitoring::promtail: true
 profiles::monitoring::promtail::client_url: http://logs.observability.vagrant:3100/loki/api/v1/push
 profiles::orchestration::consul: true
