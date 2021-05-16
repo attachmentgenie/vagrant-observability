@@ -67,9 +67,6 @@
 [submodule "production/modules/vcsrepo"]
 	path = production/modules/vcsrepo
 	url = https://github.com/puppetlabs/puppetlabs-vcsrepo.git
-[submodule "production/modules/minio"]
-	path = production/modules/minio
-	url = https://github.com/kogitoapp/puppet-minio.git
 [submodule "production/modules/lvm"]
 	path = production/modules/lvm
 	url = https://github.com/puppetlabs/puppetlabs-lvm.git

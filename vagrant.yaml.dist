@@ -2,7 +2,7 @@
 nodes:
     - name: puppetmaster
       hostname: puppet.observability.vagrant
-      aliases: "consul.observability.vagrant grafana.observability.vagrant"
+      aliases: "consul.observability.vagrant"
       box: bento/centos-7.9
       cpus: 2
       memory: 4096
@@ -17,8 +17,9 @@ nodes:
       ip: 192.168.43.43
       provision_type: puppet_agent
       puppetmaster: puppet.observability.vagrant
-    - name: s3
-      hostname: s3.observability.vagrant
+    - name: dashboards 
+      hostname: dashboards.observability.vagrant
+      aliases: "grafana.observability.vagrant statping.observability.vagrant"
       box: bento/centos-7.9
       ip: 192.168.43.44
       disks:
@@ -51,4 +52,4 @@ nodes:
       provision_type: puppet_agent
       puppetmaster: puppet.observability.vagrant
 puppet_version: 6.21.1
-virtualbox_group: '/Vagrant/example'
+virtualbox_group: '/Vagrant/observability'
