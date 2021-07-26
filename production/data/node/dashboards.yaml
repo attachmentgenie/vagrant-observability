@@ -7,6 +7,14 @@ profiles::dashboard::statping::install_method: archive
 profiles::dashboard::statping::manage_sd_service: true
 profiles::metrics::grafana: true
 profiles::metrics::grafana::datasources:
+  Alertmanager:
+    access_mode: proxy
+    grafana_url: 'http://%{::ipaddress_eth1}:3000'
+    grafana_user: admin
+    grafana_password: secret
+    is_default: false
+    type: camptocamp-prometheus-alertmanager-datasource
+    url: http://alerts.observability.vagrant:9093
   Loki:
     access_mode: proxy
     grafana_url: 'http://%{::ipaddress_eth1}:3000'
@@ -31,6 +39,11 @@ profiles::metrics::grafana::datasources:
     is_default: false
     type: tempo
     url: http://traces.observability.vagrant:3100
+profiles::metrics::grafana::plugins:
+  camptocamp-prometheus-alertmanager-datasource: {}
+  grafana-clock-panel: {}
+  yesoreyeram-infinity-datasource: {}
+  vonage-status-panel: {}
 profiles::metrics::grafana::http_addr: '%{::ipaddress_eth1}'
 profiles::metrics::grafana::manage_repo: true
 profiles::metrics::grafana::manage_sd_service: true

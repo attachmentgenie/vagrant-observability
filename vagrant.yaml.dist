@@ -22,9 +22,6 @@ nodes:
       aliases: "grafana.observability.vagrant statping.observability.vagrant"
       box: bento/centos-7.9
       ip: 192.168.43.44
-      disks:
-      - name: minio
-        size: 2
       provision_type: puppet_agent
       puppetmaster: puppet.observability.vagrant
     - name: logs
@@ -49,7 +46,10 @@ nodes:
       hostname: traces.observability.vagrant
       box: bento/centos-7.9
       ip: 192.168.43.47
+      disks:
+      - name: tempo
+        size: 2
       provision_type: puppet_agent
       puppetmaster: puppet.observability.vagrant
-puppet_version: 6.21.1
+puppet_version: 6.24.0
 virtualbox_group: '/Vagrant/observability'

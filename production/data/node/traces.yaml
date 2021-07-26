@@ -2,42 +2,36 @@
 classes:
   - roles::tracing
 profiles::tracing::tempo: true
-profiles::tracing::tempo::auth_enabled: false
 profiles::tracing::tempo::compactor_config_hash:
   compactor:
     compaction:
-      compaction_window: 1h              # blocks in this time window will be compacted together
-      max_compaction_objects: 1000000    # maximum size of compacted blocks
+      compaction_window: 1h
+      max_compaction_objects: 1000000
       block_retention: 1h
       compacted_block_retention: 10m
 profiles::tracing::tempo::distributor_config_hash:
   distributor:
     receivers:
       zipkin:
+profiles::tracing::tempo::device: '/dev/sdb'
 profiles::tracing::tempo::ingester_config_hash:
   ingester:
-    trace_idle_period: 10s               # the length of time after a trace has not received spans to consider it complete and flush it
-    max_block_duration: 5m               #   this much time passes
+    trace_idle_period: 10s
+    max_block_duration: 5m
+profiles::tracing::tempo::manage_disk: true
+profiles::tracing::tempo::multitenancy_enabled: false
 profiles::tracing::tempo::server_config_hash:
   server:
     http_listen_port: 3100
 profiles::tracing::tempo::storage_config_hash:
   storage:
     trace:
-      backend: s3                     # backend configuration to use
+      backend: local
       wal:
-        path: /tmp/tempo/wal             # where to store the the wal locally
-      s3:
-        bucket: tempo
-        endpoint: s3.observability.vagrant:9090
-        access_key: admin
-        secret_key: supersecret
-        insecure: true
-        region: us-east-1
-        forcepathstyle: false
+        path: /var/lib/tempo/wal
       local:
-        path: /tmp/tempo
+        path: /var/lib/tempo/blocks
       pool:
-        max_workers: 100                 # the worker pool mainly drives querying, but is also used for polling the blocklist
+        max_workers: 100
         queue_depth: 10000
 ...

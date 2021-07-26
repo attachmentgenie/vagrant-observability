@@ -26,7 +26,7 @@ profiles::logging::loki::schema_config_hash:
     configs:
       - from: '2020-05-15'
         store: boltdb-shipper
-        object_store: aws
+        object_store: filesystem
         schema: v11
         index:
           prefix: index_
@@ -37,15 +37,13 @@ profiles::logging::loki::server_config_hash:
 profiles::logging::loki::storage_config_hash:
   compactor:
     working_directory: /var/lib/loki/boltdb_shipper_compactor
-    shared_store: aws
+    shared_store: filesystem
   storage_config:
     boltdb_shipper:
       active_index_directory: /var/lib/loki/index
       cache_location: /var/lib/loki/index_cache
       resync_interval: 5s
-      shared_store: aws
-    aws:
-      s3: 's3://admin:supersecret@s3.observability.vagrant:9090/loki'
-      region: us-east-1
-      s3forcepathstyle: true
+      shared_store: filesystem
+    filesystem:
+      directory: /var/lib/loki/chunks
 ...
