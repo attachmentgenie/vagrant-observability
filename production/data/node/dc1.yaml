@@ -1,0 +1,15 @@
+---
+profiles::bootstrap::keepalive::instances:
+  grafana:
+    auth_type: 'PASS'
+    auth_pass: 'secret'
+    interface: 'eth1'
+    state: 'MASTER'
+    priority: 100
+    virtual_router_id: 50
+    virtual_ipaddress: '192.168.43.42/24'
+    track_script:
+      - check_grafana
+      - check_nginx
+profiles::orchestration::consul::config:
+  datacenter: dc1

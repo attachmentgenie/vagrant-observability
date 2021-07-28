@@ -1,55 +1,40 @@
 ---
 nodes:
-    - name: puppetmaster
-      hostname: puppet.observability.vagrant
-      aliases: "consul.observability.vagrant"
+    - name: dc1
+      hostname: dc1.observability.vagrant
       box: bento/centos-7.9
       cpus: 2
-      memory: 4096
-      ip: 192.168.43.42
-      synced_folders:
-        - src: 'production'
-          dst: '/etc/puppetlabs/code/environments/production'
-    - name: alerts
-      hostname: alerts.observability.vagrant
-      aliases: "mailhog.observability.vagrant"
-      box: bento/centos-7.9
-      ip: 192.168.43.43
-      provision_type: puppet_agent
-      puppetmaster: puppet.observability.vagrant
-    - name: dashboards 
-      hostname: dashboards.observability.vagrant
-      aliases: "grafana.observability.vagrant statping.observability.vagrant"
-      box: bento/centos-7.9
-      ip: 192.168.43.44
-      provision_type: puppet_agent
-      puppetmaster: puppet.observability.vagrant
-    - name: logs
-      hostname: logs.observability.vagrant
-      box: bento/centos-7.9
-      ip: 192.168.43.45
-      cpus: 2
-      memory: 4096
+      memory: 2048
+      ip: 192.168.43.40
       disks:
       - name: loki
         size: 2
-      provision_type: puppet_agent
-      puppetmaster: puppet.observability.vagrant
-    - name: metrics
-      hostname: metrics.observability.vagrant
-      box: bento/centos-7.9
-      memory: 1024
-      ip: 192.168.43.46
-      provision_type: puppet_agent
-      puppetmaster: puppet.observability.vagrant
-    - name: traces
-      hostname: traces.observability.vagrant
-      box: bento/centos-7.9
-      ip: 192.168.43.47
-      disks:
+      - name: prometheus
+        size: 2
+      - name: postgres
+        size: 2
       - name: tempo
         size: 2
-      provision_type: puppet_agent
-      puppetmaster: puppet.observability.vagrant
+      synced_folders:
+        - src: 'production'
+          dst: '/etc/puppetlabs/code/environments/production'
+    - name: dc2
+      hostname: dc2.observability.vagrant
+      box: bento/centos-7.9
+      cpus: 2
+      memory: 2048
+      ip: 192.168.43.41
+      disks:
+      - name: loki
+        size: 2
+      - name: prometheus
+        size: 2
+      - name: postgres
+        size: 2
+      - name: tempo
+        size: 2
+      synced_folders:
+        - src: 'production'
+          dst: '/etc/puppetlabs/code/environments/production'
 puppet_version: 6.24.0
 virtualbox_group: '/Vagrant/observability'
