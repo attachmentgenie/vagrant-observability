@@ -58,3 +58,9 @@
 [submodule "production/modules/keepalived"]
 	path = production/modules/keepalived
 	url = https://github.com/voxpupuli/puppet-keepalived.git
+[submodule "production/modules/dnsmasq"]
+	path = production/modules/dnsmasq
+	url = https://github.com/saz/puppet-dnsmasq.git
+[submodule "production/modules/resolv_conf"]
+	path = production/modules/resolv_conf
+	url = https://github.com/saz/puppet-resolv_conf.git

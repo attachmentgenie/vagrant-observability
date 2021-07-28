@@ -18,6 +18,8 @@ profiles::alerting::alertmanager::receivers :
     email_configs:
       - to: 'root@localhost'
         require_tls: false
+profiles::bootstrap::dnsmasq: true
+profiles::bootstrap::dnsmasq::forward_consul: true
 profiles::bootstrap::firewall: true
 profiles::bootstrap::firewall::ensure: stopped
 profiles::bootstrap::keepalive: true
@@ -27,6 +29,10 @@ profiles::bootstrap::keepalive::scripts:
   check_nginx:
     script: '/bin/systemctl status nginx'
 profiles::bootstrap::repos: true
+profiles::bootstrap::resolv: true
+profiles::bootstrap::name_servers:
+  - 127.0.0.1
+  - 10.0.2.3
 profiles::database::postgresql: true
 profiles::database::postgresql::manage_package_repo: true
 profiles::logging::loki: true
@@ -88,7 +94,7 @@ profiles::metrics::grafana::datasources:
     grafana_password: secret
     is_default: false
     type: camptocamp-prometheus-alertmanager-datasource
-    url: 'http://%{::ipaddress_eth1}:9093'
+    url: 'http://alertmanager.query.consul:9093'
   Loki:
     access_mode: proxy
     grafana_url: 'http://127.0.0.1:3000'
@@ -96,7 +102,7 @@ profiles::metrics::grafana::datasources:
     grafana_password: secret
     is_default: false
     type: loki
-    url: 'http://%{::ipaddress_eth1}:3100'
+    url: 'http://loki.query.consul:3100'
   Prometheus:
     access_mode: proxy
     grafana_url: 'http://127.0.0.1:3000'
@@ -104,7 +110,7 @@ profiles::metrics::grafana::datasources:
     grafana_password: secret
     is_default: true
     type: prometheus
-    url: 'http://%{::ipaddress_eth1}:9090'
+    url: 'http://prometheus.query.consul:9090'
   Tempo:
     access_mode: proxy
     grafana_url: 'http://127.0.0.1:3000'
@@ -112,7 +118,7 @@ profiles::metrics::grafana::datasources:
     grafana_password: secret
     is_default: false
     type: tempo
-    url: 'http://%{::ipaddress_eth1}:3101'
+    url: 'http://tempo.query.consul:3101'
 profiles::metrics::grafana::plugins:
   camptocamp-prometheus-alertmanager-datasource: {}
   grafana-clock-panel: {}
@@ -143,7 +149,7 @@ profiles::monitoring::promtail::manage_sd_service: true
 profiles::orchestration::consul: true
 profiles::orchestration::consul::config_defaults:
   "addresses": {
-    "http": '%{::ipaddress_eth1}'
+    "http": '127.0.0.1 %{::ipaddress_eth1}'
   }
   advertise_addr: '%{::ipaddress_eth1}'
   bootstrap_expect: 1

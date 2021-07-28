@@ -13,3 +13,19 @@ profiles::bootstrap::keepalive::instances:
       - check_nginx
 profiles::orchestration::consul::config:
   datacenter: dc1
+  retry_join_wan:
+    - '%{::ipaddress_eth1}'
+    - "192.168.43.41"
+profiles::orchestration::consul::prepared_queries:
+  alertmanager:
+    failover_dcs:
+      - dc2
+  loki:
+    failover_dcs:
+      - dc2
+  prometheus:
+    failover_dcs:
+      - dc2
+  tempo:
+    failover_dcs:
+      - dc2
