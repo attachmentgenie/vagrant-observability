@@ -8,6 +8,7 @@ classes:
 - profiles::tracing 
 - profiles::website 
 profiles::alerting::alertmanager: true
+profiles::alerting::alertmanager::cluster: true
 profiles::alerting::alertmanager::global:
   smtp_smarthost: 'localhost:1025'
   smtp_from: 'alertmanager@localhost'
@@ -58,6 +59,18 @@ profiles::logging::loki::limits_config_hash:
 profiles::logging::loki::device: '/dev/sdc'
 profiles::logging::loki::manage_disk: true
 profiles::logging::loki::manage_sd_service: true
+profiles::logging::loki::ruler_config_hash:
+  ruler:
+    storage:
+      type: local
+      local:
+        directory: /etc/loki/rules
+    rule_path: /tmp/scratch
+    alertmanager_url: http://localhost:9093
+    ring:
+      kvstore:
+        store: inmemory
+    enable_api: true
 profiles::logging::loki::schema_config_hash:
   schema_config:
     configs:
