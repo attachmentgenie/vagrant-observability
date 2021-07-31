@@ -9,7 +9,7 @@ profiles::bootstrap::keepalive::instances:
     virtual_router_id: 50
     virtual_ipaddress: '192.168.43.42/24'
     track_script:
-      - check_grafana
+      - check_grafana-server
       - check_nginx
 profiles::monitoring::prometheus::scrape_configs:
   - job_name: blackbox

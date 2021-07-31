@@ -24,7 +24,7 @@ profiles::bootstrap::firewall: true
 profiles::bootstrap::firewall::ensure: stopped
 profiles::bootstrap::keepalive: true
 profiles::bootstrap::keepalive::scripts:
-  check_grafana:
+  check_grafana-server:
     script: '/bin/systemctl status grafana-server'
   check_nginx:
     script: '/bin/systemctl status nginx'
@@ -161,6 +161,7 @@ profiles::orchestration::consul::config_defaults:
     disable_hostname: true
   data_dir: /var/lib/consul
 profiles::orchestration::consul::manage_sd_service: true
+profiles::orchestration::consul::sd_service_endpoint: 'http://%{::ipaddress_eth1}:8500'
 profiles::orchestration::consul::ui: true
 profiles::tracing::tempo: true
 profiles::tracing::tempo::compactor_config_hash:
