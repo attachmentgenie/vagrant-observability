@@ -11,13 +11,137 @@ profiles::bootstrap::keepalive::instances:
     track_script:
       - check_grafana
       - check_nginx
+profiles::monitoring::prometheus::scrape_configs:
+  - job_name: blackbox
+    scrape_interval: 30s
+    scrape_timeout: 30s
+    static_configs:
+      - targets:
+          - '%{::ipaddress_eth1}:9115'
+          - '192.168.43.40:9115'
+        labels:
+          dc: 'dc1'
+          hostname: '%{::fqdn}'
+  - job_name: consul-dc1
+    metrics_path: '/v1/agent/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 30s
+    consul_sd_configs:
+      - server: 'localhost:8500'
+        datacenter: dc1
+        services:
+          - 'consul-ui'
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: ['__meta_consul_dc']
+        regex:         '(.*)'
+        target_label:  'dc'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_node']
+        regex:         '(.*)'
+        target_label:  'hostname'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_service']
+        regex:         '(.*)'
+        target_label:  'job'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_tags']
+        separator:     ','
+        regex:         'label:([^=]+)=([^,]+)'
+        target_label:  '${1}'
+        replacement:   '${2}'
+  - job_name: consul-dc2
+    metrics_path: '/v1/agent/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 30s
+    consul_sd_configs:
+      - server: 'localhost:8500'
+        datacenter: dc2
+        services:
+          - 'consul-ui'
+    params:
+      format: ['prometheus']
+    relabel_configs:
+      - source_labels: ['__meta_consul_dc']
+        regex:         '(.*)'
+        target_label:  'dc'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_node']
+        regex:         '(.*)'
+        target_label:  'hostname'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_service']
+        regex:         '(.*)'
+        target_label:  'job'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_tags']
+        separator:     ','
+        regex:         'label:([^=]+)=([^,]+)'
+        target_label:  '${1}'
+        replacement:   '${2}'
+  - job_name: DC1
+    scrape_interval: 30s
+    scrape_timeout: 30s
+    consul_sd_configs:
+      - server: 'localhost:8500'
+        datacenter: dc1
+        tags:
+          - 'metrics'
+    relabel_configs:
+      - source_labels: ['__meta_consul_dc']
+        regex:         '(.*)'
+        target_label:  'dc'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_node']
+        regex:         '(.*)'
+        target_label:  'hostname'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_service']
+        regex:         '(.*)'
+        target_label:  'job'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_tags']
+        separator:     ','
+        regex:         'label:([^=]+)=([^,]+)'
+        target_label:  '${1}'
+        replacement:   '${2}'
+  - job_name: DC2
+    scrape_interval: 30s
+    scrape_timeout: 30s
+    consul_sd_configs:
+      - server: 'localhost:8500'
+        datacenter: dc2
+        tags:
+          - 'metrics'
+    relabel_configs:
+      - source_labels: ['__meta_consul_dc']
+        regex:         '(.*)'
+        target_label:  'dc'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_node']
+        regex:         '(.*)'
+        target_label:  'hostname'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_service']
+        regex:         '(.*)'
+        target_label:  'job'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_tags']
+        separator:     ','
+        regex:         'label:([^=]+)=([^,]+)'
+        target_label:  '${1}'
+        replacement:   '${2}'
 profiles::orchestration::consul::config:
   datacenter: dc2
   retry_join_wan:
     - '%{::ipaddress_eth1}'
-    - "192.168.43.40"
+    - '192.168.43.40'
 profiles::orchestration::consul::prepared_queries:
   alertmanager:
+    failover_dcs:
+      - dc1
+  grafana:
     failover_dcs:
       - dc1
   loki:

@@ -30,10 +30,12 @@ profiles::bootstrap::keepalive::scripts:
     script: '/bin/systemctl status nginx'
 profiles::bootstrap::repos: true
 profiles::bootstrap::resolv: true
-profiles::bootstrap::name_servers:
+profiles::bootstrap::resolv::name_servers:
   - 127.0.0.1
   - 10.0.2.3
 profiles::database::postgresql: true
+profiles::database::postgresql::device: '/dev/sdb'
+profiles::database::postgresql::manage_disk: true
 profiles::database::postgresql::manage_package_repo: true
 profiles::logging::loki: true
 profiles::logging::loki::auth_enabled: false
@@ -53,7 +55,7 @@ profiles::logging::loki::limits_config_hash:
     enforce_metric_name: false
     reject_old_samples: true
     reject_old_samples_max_age: 168h
-profiles::logging::loki::device: '/dev/sdb'
+profiles::logging::loki::device: '/dev/sdc'
 profiles::logging::loki::manage_disk: true
 profiles::logging::loki::manage_sd_service: true
 profiles::logging::loki::schema_config_hash:
@@ -89,7 +91,7 @@ profiles::metrics::grafana: true
 profiles::metrics::grafana::datasources:
   Alertmanager:
     access_mode: proxy
-    grafana_url: 'http://127.0.0.1:3000'
+    grafana_url: 'http://%{::ipaddress_eth1}:3000'
     grafana_user: admin
     grafana_password: secret
     is_default: false
@@ -97,7 +99,7 @@ profiles::metrics::grafana::datasources:
     url: 'http://alertmanager.query.consul:9093'
   Loki:
     access_mode: proxy
-    grafana_url: 'http://127.0.0.1:3000'
+    grafana_url: 'http://%{::ipaddress_eth1}:3000'
     grafana_user: admin
     grafana_password: secret
     is_default: false
@@ -105,7 +107,7 @@ profiles::metrics::grafana::datasources:
     url: 'http://loki.query.consul:3100'
   Prometheus:
     access_mode: proxy
-    grafana_url: 'http://127.0.0.1:3000'
+    grafana_url: 'http://%{::ipaddress_eth1}:3000'
     grafana_user: admin
     grafana_password: secret
     is_default: true
@@ -113,12 +115,13 @@ profiles::metrics::grafana::datasources:
     url: 'http://prometheus.query.consul:9090'
   Tempo:
     access_mode: proxy
-    grafana_url: 'http://127.0.0.1:3000'
+    grafana_url: 'http://%{::ipaddress_eth1}:3000'
     grafana_user: admin
     grafana_password: secret
     is_default: false
     type: tempo
     url: 'http://tempo.query.consul:3101'
+profiles::metrics::grafana::http_addr: '%{::ipaddress_eth1}'
 profiles::metrics::grafana::plugins:
   camptocamp-prometheus-alertmanager-datasource: {}
   grafana-clock-panel: {}
@@ -127,22 +130,14 @@ profiles::metrics::grafana::plugins:
 profiles::metrics::grafana::manage_repo: true
 profiles::metrics::grafana::manage_sd_service: true
 profiles::monitoring::prometheus: true
+profiles::monitoring::prometheus::blackbox: true
 profiles::monitoring::prometheus::client: true
+profiles::monitoring::prometheus::device: '/dev/sdd'
+profiles::monitoring::prometheus::graphite_exporters: true
+profiles::monitoring::prometheus::manage_disk: true
 profiles::monitoring::prometheus::manage_sd_service: true
+profiles::monitoring::prometheus::pushgateway: true
 profiles::monitoring::prometheus::server: true
-profiles::monitoring::prometheus::scrape_configs:
-  - job_name: prometheus
-    scrape_interval: 30s
-    scrape_timeout: 30s
-    static_configs:
-      - targets:
-          - '%{::ipaddress_eth1}:9090'
-  - job_name: node_exporter
-    scrape_interval: 30s
-    scrape_timeout: 30s
-    static_configs:
-      - targets:
-          - '%{::ipaddress_eth1}:9100'
 profiles::monitoring::promtail: true
 profiles::monitoring::promtail::client_url: 'http://%{::ipaddress_eth1}:3100/loki/api/v1/push'
 profiles::monitoring::promtail::manage_sd_service: true
@@ -161,7 +156,12 @@ profiles::orchestration::consul::config_defaults:
       base_url: "http://%{::ipaddress_eth1}:9090/"
   retry_join:
     - '%{::ipaddress_eth1}'
+  telemetry:
+    prometheus_retention_time: 480h
+    disable_hostname: true
   data_dir: /var/lib/consul
+profiles::orchestration::consul::manage_sd_service: true
+profiles::orchestration::consul::ui: true
 profiles::tracing::tempo: true
 profiles::tracing::tempo::compactor_config_hash:
   compactor:
@@ -174,7 +174,7 @@ profiles::tracing::tempo::distributor_config_hash:
   distributor:
     receivers:
       zipkin:
-profiles::tracing::tempo::device: '/dev/sdc'
+profiles::tracing::tempo::device: '/dev/sde'
 profiles::tracing::tempo::ingester_config_hash:
   ingester:
     trace_idle_period: 10s
@@ -201,6 +201,6 @@ profiles::tracing::tempo::storage_config_hash:
         queue_depth: 10000
 profiles::website::nginx: true
 profiles::website::nginx::proxies:
-  '%{::ipaddress_eth1}':
-    proxy_url: 'http://127.0.0.1:3000'
+  'grafana.query.consul':
+    proxy_url: 'http://grafana.query.consul:3000'
 ...
