@@ -10,33 +10,18 @@
 [submodule "modules/firewall"]
 	path = production/modules/firewall
 	url = git@github.com:puppetlabs/puppetlabs-firewall.git
-[submodule "production/modules/puppet"]
-	path = production/modules/puppet
-	url = https://github.com/theforeman/puppet-puppet.git
 [submodule "production/modules/concat"]
 	path = production/modules/concat
 	url = https://github.com/puppetlabs/puppetlabs-concat.git
 [submodule "production/modules/systemd"]
 	path = production/modules/systemd
 	url = https://github.com/camptocamp/puppet-systemd.git
-[submodule "production/modules/puppetdb"]
-	path = production/modules/puppetdb
-	url = git@github.com:puppetlabs/puppetlabs-puppetdb.git
 [submodule "production/modules/inifile"]
 	path = production/modules/inifile
 	url = https://github.com/puppetlabs/puppetlabs-inifile.git
-[submodule "production/modules/epel"]
-	path = production/modules/epel
-	url = https://github.com/stahnma/puppet-module-epel.git
 [submodule "production/modules/grafana"]
 	path = production/modules/grafana
 	url = https://github.com/voxpupuli/puppet-grafana.git
-[submodule "production/modules/icinga2"]
-	path = production/modules/icinga2
-	url = https://github.com/Icinga/puppet-icinga2.git
-[submodule "production/modules/icinga"]
-	path = production/modules/icinga
-	url = https://github.com/Icinga/puppet-icinga.git
 [submodule "production/modules/promtail"]
 	path = production/modules/promtail
 	url = https://github.com/grafana/puppet-promtail.git
@@ -49,24 +34,9 @@
 [submodule "production/modules/hashi_stack"]
 	path = production/modules/hashi_stack
 	url = https://github.com/voxpupuli/puppet-hashi_stack.git
-[submodule "production/modules/postgresql"]
-	path = production/modules/postgresql
-	url = https://github.com/puppetlabs/puppetlabs-postgresql.git
-[submodule "production/modules/php"]
-	path = production/modules/php
-	url = https://github.com/voxpupuli/puppet-php.git
 [submodule "production/modules/prometheus"]
 	path = production/modules/prometheus
 	url = git@github.com:voxpupuli/puppet-prometheus.git
-[submodule "production/modules/icingaweb2"]
-	path = production/modules/icingaweb2
-	url = https://github.com/Icinga/puppet-icingaweb2.git
-[submodule "production/modules/apache"]
-	path = production/modules/apache
-	url = https://github.com/puppetlabs/puppetlabs-apache.git
-[submodule "production/modules/vcsrepo"]
-	path = production/modules/vcsrepo
-	url = https://github.com/puppetlabs/puppetlabs-vcsrepo.git
 [submodule "production/modules/lvm"]
 	path = production/modules/lvm
 	url = https://github.com/puppetlabs/puppetlabs-lvm.git
@@ -79,6 +49,18 @@
 [submodule "production/modules/mailhog"]
 	path = production/modules/mailhog
 	url = git@github.com:attachmentgenie/attachmentgenie-mailhog.git
-[submodule "production/modules/statping"]
-	path = production/modules/statping
-	url = git@github.com:attachmentgenie/attachmentgenie-statping.git
+[submodule "production/modules/nginx"]
+	path = production/modules/nginx
+	url = https://github.com/voxpupuli/puppet-nginx.git
+[submodule "production/modules/keepalived"]
+	path = production/modules/keepalived
+	url = https://github.com/voxpupuli/puppet-keepalived.git
+[submodule "production/modules/dnsmasq"]
+	path = production/modules/dnsmasq
+	url = https://github.com/saz/puppet-dnsmasq.git
+[submodule "production/modules/resolv_conf"]
+	path = production/modules/resolv_conf
+	url = https://github.com/saz/puppet-resolv_conf.git
+[submodule "production/modules/mysql"]
+	path = production/modules/mysql
+	url = https://github.com/puppetlabs/puppetlabs-mysql.git

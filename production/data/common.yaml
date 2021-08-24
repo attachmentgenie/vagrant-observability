@@ -1,35 +1,250 @@
 ---
+lookup_options:
+  profiles::database::mysql::override_options:
+    merge:
+      strategy: deep
+      merge_hash_arrays: true
+classes:
+- roles::node
+- profiles::alerting 
+- profiles::cache
+- profiles::database
+- profiles::logging 
+- profiles::tracing 
+- profiles::website 
+profiles::alerting::alertmanager: true
+profiles::alerting::alertmanager::cluster: true
+profiles::alerting::alertmanager::global:
+  smtp_smarthost: 'localhost:1025'
+  smtp_from: 'alertmanager@localhost'
+profiles::alerting::alertmanager::install_method: url
+profiles::alerting::alertmanager::manage_sd_service: true
+profiles::alerting::alertmanager::receivers :
+  - name: Admin
+    email_configs:
+      - to: 'root@localhost'
+        require_tls: false
+profiles::bootstrap::dnsmasq: true
+profiles::bootstrap::dnsmasq::forward_consul: true
 profiles::bootstrap::firewall: true
 profiles::bootstrap::firewall::ensure: stopped
-profiles::bootstrap::puppet: true
-profiles::bootstrap::puppet::puppetmaster: puppet.observability.vagrant
-profiles::bootstrap::puppet::runinterval: 180
-profiles::bootstrap::puppet::splaylimit: 180s
+profiles::bootstrap::keepalive: true
+profiles::bootstrap::keepalive::scripts:
+  check_grafana-server:
+    script: '/bin/systemctl status grafana-server'
+  check_nginx:
+    script: '/bin/systemctl status nginx'
 profiles::bootstrap::repos: true
-profiles::database::postgresql::manage_package_repo: true
-profiles::monitoring::icinga2: true
-profiles::monitoring::icinga2::client: false
-profiles::monitoring::icinga2::ipaddress: '%{::ipaddress_enp0s8}'
-profiles::monitoring::icinga2::manage_repo: true
-profiles::monitoring::icinga2::parent_endpoints:
-  'icinga.observability.vagrant':
-    host: 192.168.43.42
-profiles::monitoring::icinga2::vars:
-  disks:
-    'disk /':
-      disk_wfree: 10%
-      disk_cfree: 5%
+profiles::bootstrap::resolv: true
+profiles::bootstrap::resolv::name_servers:
+  - 127.0.0.1
+  - 10.0.2.3
+profiles::database::mysql: true
+profiles::database::mysql::device: '/dev/sdb'
+profiles::database::mysql::listen_address: '%{::ipaddress_eth1}'
+profiles::database::mysql::manage_disk: true
+profiles::database::mysql::manage_sd_service: true
+profiles::database::mysql::override_options:
+  mysqld:
+    log-bin: mysql-bin
+    binlog-do-db: grafana
+    replicate-do-db: grafana
+    relay-log: mysql-relay-log
+    auto-increment-increment: 2
+profiles::database::mysql::users:
+  repl_user:
+    grants:
+      - REPLICATION SLAVE
+    host: '192.168.43.%'
+    password: secret
+    table: '*.*'
+profiles::logging::loki: true
+profiles::logging::loki::auth_enabled: false
+profiles::logging::loki::ingester_config_hash:
+  ingester:
+    lifecycler:
+      address: 127.0.0.1
+      ring:
+        kvstore:
+          store: inmemory
+        replication_factor: 1
+      final_sleep: 0s
+    chunk_idle_period: 5m
+    chunk_retain_period: 30s
+profiles::logging::loki::limits_config_hash:
+  limits_config:
+    enforce_metric_name: false
+    reject_old_samples: true
+    reject_old_samples_max_age: 168h
+profiles::logging::loki::device: '/dev/sdc'
+profiles::logging::loki::manage_disk: true
+profiles::logging::loki::manage_sd_service: true
+profiles::logging::loki::ruler_config_hash:
+  ruler:
+    storage:
+      type: local
+      local:
+        directory: /etc/loki/rules
+    rule_path: /tmp/scratch
+    alertmanager_url: http://localhost:9093
+    ring:
+      kvstore:
+        store: inmemory
+    enable_api: true
+profiles::logging::loki::schema_config_hash:
+  schema_config:
+    configs:
+      - from: '2020-05-15'
+        store: boltdb-shipper
+        object_store: filesystem
+        schema: v11
+        index:
+          prefix: index_
+          period: 24h
+profiles::logging::loki::server_config_hash:
+  server:
+    http_listen_port: 3100
+profiles::logging::loki::storage_config_hash:
+  compactor:
+    working_directory: /var/lib/loki/boltdb_shipper_compactor
+    shared_store: filesystem
+  storage_config:
+    boltdb_shipper:
+      active_index_directory: /var/lib/loki/index
+      cache_location: /var/lib/loki/index_cache
+      resync_interval: 5s
+      shared_store: filesystem
+    filesystem:
+      directory: /var/lib/loki/chunks
+profiles::mail::mailhog: true
+profiles::mail::mailhog::config: '-ui-bind-addr=0.0.0.0:8025 -api-bind-addr=0.0.0.0:8025'
+profiles::mail::mailhog::install_method: archive
+profiles::mail::mailhog::manage_sd_service: true
+profiles::metrics::grafana: true
+profiles::metrics::grafana::db_host: mysql.query.consul
+profiles::metrics::grafana::db_password: grafana
+profiles::metrics::grafana::db_port: 3306
+profiles::metrics::grafana::db_type: mysql
+profiles::metrics::grafana::db_user: grafana
+profiles::metrics::grafana::datasources:
+  Alertmanager:
+    access_mode: proxy
+    grafana_url: 'http://%{::ipaddress_eth1}:3000'
+    grafana_user: admin
+    grafana_password: secret
+    is_default: false
+    type: camptocamp-prometheus-alertmanager-datasource
+    url: 'http://alertmanager.query.consul:9093'
+  Loki:
+    access_mode: proxy
+    grafana_url: 'http://%{::ipaddress_eth1}:3000'
+    grafana_user: admin
+    grafana_password: secret
+    is_default: false
+    type: loki
+    url: 'http://loki.query.consul:3100'
+  Prometheus:
+    access_mode: proxy
+    grafana_url: 'http://%{::ipaddress_eth1}:3000'
+    grafana_user: admin
+    grafana_password: secret
+    is_default: true
+    type: prometheus
+    url: 'http://prometheus.query.consul:9090'
+  Tempo:
+    access_mode: proxy
+    grafana_url: 'http://%{::ipaddress_eth1}:3000'
+    grafana_user: admin
+    grafana_password: secret
+    is_default: false
+    type: tempo
+    url: 'http://tempo.query.consul:3101'
+profiles::metrics::grafana::http_addr: '%{::ipaddress_eth1}'
+profiles::metrics::grafana::manage_db: true
+profiles::metrics::grafana::manage_repo: true
+profiles::metrics::grafana::manage_sd_service: true
+profiles::metrics::grafana::plugins:
+  camptocamp-prometheus-alertmanager-datasource: {}
+  grafana-clock-panel: {}
+  yesoreyeram-infinity-datasource: {}
+  vonage-status-panel: {}
 profiles::monitoring::prometheus: true
+profiles::monitoring::prometheus::blackbox: true
 profiles::monitoring::prometheus::client: true
+profiles::monitoring::prometheus::device: '/dev/sdd'
+profiles::monitoring::prometheus::graphite_exporters: true
+profiles::monitoring::prometheus::manage_disk: true
 profiles::monitoring::prometheus::manage_sd_service: true
+profiles::monitoring::prometheus::pushgateway: true
+profiles::monitoring::prometheus::server: true
 profiles::monitoring::promtail: true
-profiles::monitoring::promtail::client_url: http://logs.observability.vagrant:3100/loki/api/v1/push
+profiles::monitoring::promtail::client_urls:
+  - url: 'http://192.168.43.40:3100/loki/api/v1/push'
+  - url: 'http://192.168.43.41:3100/loki/api/v1/push'
+profiles::monitoring::promtail::manage_sd_service: true
 profiles::orchestration::consul: true
-profiles::orchestration::consul::config:
-  retry_join:
-    - puppet.observability.vagrant
 profiles::orchestration::consul::config_defaults:
+  "addresses": {
+    "http": '127.0.0.1 %{::ipaddress_eth1}'
+  }
   advertise_addr: '%{::ipaddress_eth1}'
+  bootstrap_expect: 1
+  server: true
+  ui_config:
+    enabled: true
+    metrics_provider: "prometheus"
+    metrics_proxy:
+      base_url: "http://prometheus.query.consul:9090/"
+  retry_join:
+    - '%{::ipaddress_eth1}'
+  telemetry:
+    prometheus_retention_time: 480h
+    disable_hostname: true
   data_dir: /var/lib/consul
-  datacenter: lab
+profiles::orchestration::consul::install_method: package
+profiles::orchestration::consul::manage_package_repo: true
+profiles::orchestration::consul::manage_sd_service: true
+profiles::orchestration::consul::sd_service_endpoint: 'http://%{::ipaddress_eth1}:8500'
+profiles::orchestration::consul::ui: true
+profiles::tracing::tempo: true
+profiles::tracing::tempo::compactor_config_hash:
+  compactor:
+    compaction:
+      compaction_window: 1h
+      max_compaction_objects: 1000000
+      block_retention: 1h
+      compacted_block_retention: 10m
+profiles::tracing::tempo::distributor_config_hash:
+  distributor:
+    receivers:
+      zipkin:
+profiles::tracing::tempo::device: '/dev/sde'
+profiles::tracing::tempo::ingester_config_hash:
+  ingester:
+    trace_idle_period: 10s
+    max_block_duration: 5m
+profiles::tracing::tempo::manage_disk: true
+profiles::tracing::tempo::manage_sd_service: true
+profiles::tracing::tempo::multitenancy_enabled: false
+profiles::tracing::tempo::port_grpc: 9096
+profiles::tracing::tempo::port_tcp: 3101
+profiles::tracing::tempo::server_config_hash:
+  server:
+    http_listen_port: 3101
+    grpc_listen_port: 9096
+profiles::tracing::tempo::storage_config_hash:
+  storage:
+    trace:
+      backend: local
+      wal:
+        path: /var/lib/tempo/wal
+      local:
+        path: /var/lib/tempo/blocks
+      pool:
+        max_workers: 100
+        queue_depth: 10000
+profiles::website::nginx: true
+profiles::website::nginx::proxies:
+  'grafana.query.consul':
+    proxy_url: 'http://grafana.query.consul:3000'
 ...
