@@ -1,4 +1,9 @@
 ---
+lookup_options:
+  profiles::database::mysql::override_options:
+    merge:
+      strategy: deep
+      merge_hash_arrays: true
 classes:
 - roles::node
 - profiles::alerting 
@@ -34,10 +39,25 @@ profiles::bootstrap::resolv: true
 profiles::bootstrap::resolv::name_servers:
   - 127.0.0.1
   - 10.0.2.3
-profiles::database::postgresql: true
-profiles::database::postgresql::device: '/dev/sdb'
-profiles::database::postgresql::manage_disk: true
-profiles::database::postgresql::manage_package_repo: true
+profiles::database::mysql: true
+profiles::database::mysql::device: '/dev/sdb'
+profiles::database::mysql::listen_address: '%{::ipaddress_eth1}'
+profiles::database::mysql::manage_disk: true
+profiles::database::mysql::manage_sd_service: true
+profiles::database::mysql::override_options:
+  mysqld:
+    log-bin: mysql-bin
+    binlog-do-db: grafana
+    replicate-do-db: grafana
+    relay-log: mysql-relay-log
+    auto-increment-increment: 2
+profiles::database::mysql::users:
+  repl_user:
+    grants:
+      - REPLICATION SLAVE
+    host: '192.168.43.%'
+    password: secret
+    table: '*.*'
 profiles::logging::loki: true
 profiles::logging::loki::auth_enabled: false
 profiles::logging::loki::ingester_config_hash:
@@ -101,6 +121,11 @@ profiles::mail::mailhog::config: '-ui-bind-addr=0.0.0.0:8025 -api-bind-addr=0.0.
 profiles::mail::mailhog::install_method: archive
 profiles::mail::mailhog::manage_sd_service: true
 profiles::metrics::grafana: true
+profiles::metrics::grafana::db_host: mysql.query.consul
+profiles::metrics::grafana::db_password: grafana
+profiles::metrics::grafana::db_port: 3306
+profiles::metrics::grafana::db_type: mysql
+profiles::metrics::grafana::db_user: grafana
 profiles::metrics::grafana::datasources:
   Alertmanager:
     access_mode: proxy
@@ -135,13 +160,14 @@ profiles::metrics::grafana::datasources:
     type: tempo
     url: 'http://tempo.query.consul:3101'
 profiles::metrics::grafana::http_addr: '%{::ipaddress_eth1}'
+profiles::metrics::grafana::manage_db: true
+profiles::metrics::grafana::manage_repo: true
+profiles::metrics::grafana::manage_sd_service: true
 profiles::metrics::grafana::plugins:
   camptocamp-prometheus-alertmanager-datasource: {}
   grafana-clock-panel: {}
   yesoreyeram-infinity-datasource: {}
   vonage-status-panel: {}
-profiles::metrics::grafana::manage_repo: true
-profiles::metrics::grafana::manage_sd_service: true
 profiles::monitoring::prometheus: true
 profiles::monitoring::prometheus::blackbox: true
 profiles::monitoring::prometheus::client: true
@@ -152,7 +178,9 @@ profiles::monitoring::prometheus::manage_sd_service: true
 profiles::monitoring::prometheus::pushgateway: true
 profiles::monitoring::prometheus::server: true
 profiles::monitoring::promtail: true
-profiles::monitoring::promtail::client_url: 'http://loki.query.consul:3100/loki/api/v1/push'
+profiles::monitoring::promtail::client_urls:
+  - url: 'http://192.168.43.40:3100/loki/api/v1/push'
+  - url: 'http://192.168.43.41:3100/loki/api/v1/push'
 profiles::monitoring::promtail::manage_sd_service: true
 profiles::orchestration::consul: true
 profiles::orchestration::consul::config_defaults:
@@ -173,6 +201,8 @@ profiles::orchestration::consul::config_defaults:
     prometheus_retention_time: 480h
     disable_hostname: true
   data_dir: /var/lib/consul
+profiles::orchestration::consul::install_method: package
+profiles::orchestration::consul::manage_package_repo: true
 profiles::orchestration::consul::manage_sd_service: true
 profiles::orchestration::consul::sd_service_endpoint: 'http://%{::ipaddress_eth1}:8500'
 profiles::orchestration::consul::ui: true

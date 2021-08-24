@@ -1,17 +1,20 @@
 ---
+required_plugins:
+    - vagrant-hostmanager
+    - vagrant-puppet-install
 nodes:
     - name: dc1
       hostname: dc1.observability.vagrant
       box: bento/centos-7.9
       cpus: 2
-      memory: 2048
+      memory: 3072
       ip: 192.168.43.40
       disks:
       - name: loki
         size: 2
-      - name: prometheus
+      - name: mysql
         size: 2
-      - name: postgres
+      - name: prometheus
         size: 2
       - name: tempo
         size: 2
@@ -22,14 +25,14 @@ nodes:
       hostname: dc2.observability.vagrant
       box: bento/centos-7.9
       cpus: 2
-      memory: 2048
+      memory: 3072
       ip: 192.168.43.41
       disks:
       - name: loki
         size: 2
-      - name: prometheus
+      - name: mysql
         size: 2
-      - name: postgres
+      - name: prometheus
         size: 2
       - name: tempo
         size: 2

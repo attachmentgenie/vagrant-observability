@@ -12,6 +12,10 @@ profiles::bootstrap::keepalive::instances:
     track_script:
       - check_grafana-server
       - check_nginx
+profiles::database::mysql::override_options:
+  mysqld:
+    server-id: 1
+    auto-increment-offset: 1
 profiles::monitoring::prometheus::scrape_configs:
   - job_name: blackbox
     scrape_interval: 30s
@@ -146,6 +150,9 @@ profiles::orchestration::consul::prepared_queries:
     failover_dcs:
       - dc2
   loki:
+    failover_dcs:
+      - dc2
+  mysql:
     failover_dcs:
       - dc2
   prometheus:

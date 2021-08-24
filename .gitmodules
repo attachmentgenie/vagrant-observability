@@ -34,9 +34,6 @@
 [submodule "production/modules/hashi_stack"]
 	path = production/modules/hashi_stack
 	url = https://github.com/voxpupuli/puppet-hashi_stack.git
-[submodule "production/modules/postgresql"]
-	path = production/modules/postgresql
-	url = https://github.com/puppetlabs/puppetlabs-postgresql.git
 [submodule "production/modules/prometheus"]
 	path = production/modules/prometheus
 	url = git@github.com:voxpupuli/puppet-prometheus.git
@@ -64,3 +61,6 @@
 [submodule "production/modules/resolv_conf"]
 	path = production/modules/resolv_conf
 	url = https://github.com/saz/puppet-resolv_conf.git
+[submodule "production/modules/mysql"]
+	path = production/modules/mysql
+	url = https://github.com/puppetlabs/puppetlabs-mysql.git

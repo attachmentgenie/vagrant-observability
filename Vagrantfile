@@ -61,9 +61,9 @@ Vagrant.configure("2") do |config|
   if vagrant_config['virtualbox_group']
     config.vm.provider 'virtualbox' do |v|
       v.customize [
-        'modifyvm', :id,
-        '--groups', vagrant_config['virtualbox_group']
-      ]
+                    'modifyvm', :id,
+                    '--groups', vagrant_config['virtualbox_group']
+                  ]
     end
   end
 
@@ -97,11 +97,11 @@ Vagrant.configure("2") do |config|
           end
           if node["disks"]
             node["disks"].each_with_index do |disk, index|
-              medium_name = "#{node["name"]}_#{disk["name"]}.vdi"
+              medium_name = "disks/#{node["name"]}_#{disk["name"]}.vdi"
               unless File.exist?(medium_name)
                 v.customize ['createmedium', '--filename', medium_name, '--variant', 'Fixed', '--size', disk["size"] * 1024]
               end
-                v.customize ['storageattach', :id,  '--storagectl', 'SATA Controller', '--port', index +1 , '--device', 0, '--type', 'hdd', '--medium', medium_name]
+              v.customize ['storageattach', :id,  '--storagectl', 'SATA Controller', '--port', index +1 , '--device', 0, '--type', 'hdd', '--medium', medium_name]
             end
           end
         end
