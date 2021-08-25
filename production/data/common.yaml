@@ -52,12 +52,18 @@ profiles::database::mysql::override_options:
     relay-log: mysql-relay-log
     auto-increment-increment: 2
 profiles::database::mysql::users:
+  grafana:
+    dbname: grafana
+    grants:
+      - ALL
+    host: '192.168.43.%'
+    password: grafana
   repl_user:
+    dbname: '*'
     grants:
       - REPLICATION SLAVE
     host: '192.168.43.%'
     password: secret
-    table: '*.*'
 profiles::logging::loki: true
 profiles::logging::loki::auth_enabled: false
 profiles::logging::loki::ingester_config_hash:
