@@ -50,6 +50,7 @@ profiles::database::mysql::override_options:
     binlog-do-db: grafana
     replicate-do-db: grafana
     relay-log: mysql-relay-log
+    sync_binlog: 1
     auto-increment-increment: 2
 profiles::database::mysql::users:
   grafana:
@@ -251,6 +252,10 @@ profiles::tracing::tempo::storage_config_hash:
         queue_depth: 10000
 profiles::website::nginx: true
 profiles::website::nginx::proxies:
-  'grafana.query.consul':
+  '192.168.43.42':
+    client_max_body_size: 20M
     proxy_url: 'http://grafana.query.consul:3000'
+    public_name:
+      - '192.168.43.42'
+      - '%{::ipaddress_eth1}'
 ...
