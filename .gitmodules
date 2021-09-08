@@ -64,3 +64,6 @@
 [submodule "production/modules/mysql"]
 	path = production/modules/mysql
 	url = https://github.com/puppetlabs/puppetlabs-mysql.git
+[submodule "production/modules/grafana_agent"]
+	path = production/modules/grafana_agent
+	url = git@github.com:attachmentgenie/attachmentgenie-grafana_agent.git

@@ -4,6 +4,10 @@ lookup_options:
     merge:
       strategy: deep
       merge_hash_arrays: true
+  profiles::monitoring::grafana_agent::tempo_config_hash:
+    merge:
+      strategy: deep
+      merge_hash_arrays: true
 classes:
 - roles::node
 - profiles::alerting 
@@ -165,7 +169,7 @@ profiles::metrics::grafana::datasources:
     grafana_password: secret
     is_default: false
     type: tempo
-    url: 'http://tempo.query.consul:3101'
+    url: 'http://tempo.query.consul:3200'
 profiles::metrics::grafana::http_addr: '%{::ipaddress_eth1}'
 profiles::metrics::grafana::manage_db: true
 profiles::metrics::grafana::manage_repo: true
@@ -175,6 +179,23 @@ profiles::metrics::grafana::plugins:
   grafana-clock-panel: {}
   yesoreyeram-infinity-datasource: {}
   vonage-status-panel: {}
+profiles::monitoring::grafana_agent: true
+profiles::monitoring::grafana_agent::server_config_hash:
+  server:
+    grpc_listen_port: 12346
+    http_listen_port: 12345
+profiles::monitoring::grafana_agent::tempo_config_hash:
+  tempo:
+    configs:
+      - name: default
+        receivers:
+          zipkin:
+        remote_write:
+          - endpoint: '%{::ipaddress_eth1}:55680'
+            insecure: true
+        batch:
+          timeout: 5s
+          send_batch_size: 100
 profiles::monitoring::prometheus: true
 profiles::monitoring::prometheus::blackbox: true
 profiles::monitoring::prometheus::client: true
@@ -224,7 +245,9 @@ profiles::tracing::tempo::compactor_config_hash:
 profiles::tracing::tempo::distributor_config_hash:
   distributor:
     receivers:
-      zipkin:
+      otlp:
+        protocols:
+          grpc:
 profiles::tracing::tempo::device: '/dev/sde'
 profiles::tracing::tempo::ingester_config_hash:
   ingester:
@@ -234,10 +257,10 @@ profiles::tracing::tempo::manage_disk: true
 profiles::tracing::tempo::manage_sd_service: true
 profiles::tracing::tempo::multitenancy_enabled: false
 profiles::tracing::tempo::port_grpc: 9096
-profiles::tracing::tempo::port_tcp: 3101
+profiles::tracing::tempo::port_tcp: 3200
 profiles::tracing::tempo::server_config_hash:
   server:
-    http_listen_port: 3101
+    http_listen_port: 3200
     grpc_listen_port: 9096
 profiles::tracing::tempo::storage_config_hash:
   storage:
