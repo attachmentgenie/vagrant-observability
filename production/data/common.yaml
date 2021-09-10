@@ -31,7 +31,6 @@ profiles::alerting::alertmanager::receivers :
 profiles::bootstrap::dnsmasq: true
 profiles::bootstrap::dnsmasq::forward_consul: true
 profiles::bootstrap::firewall: true
-profiles::bootstrap::firewall::ensure: stopped
 profiles::bootstrap::keepalive: true
 profiles::bootstrap::keepalive::scripts:
   check_grafana-server:
