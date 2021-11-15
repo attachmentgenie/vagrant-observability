@@ -60,13 +60,13 @@ profiles::database::mysql::users:
     dbname: grafana
     grants:
       - ALL
-    host: '192.168.43.%'
+    host: '192.168.56.%'
     password: grafana
   repl_user:
     dbname: '*'
     grants:
       - REPLICATION SLAVE
-    host: '192.168.43.%'
+    host: '192.168.56.%'
     password: secret
 profiles::logging::loki: true
 profiles::logging::loki::auth_enabled: false
@@ -206,8 +206,8 @@ profiles::monitoring::prometheus::pushgateway: true
 profiles::monitoring::prometheus::server: true
 profiles::monitoring::promtail: true
 profiles::monitoring::promtail::client_urls:
-  - url: 'http://192.168.43.40:3100/loki/api/v1/push'
-  - url: 'http://192.168.43.41:3100/loki/api/v1/push'
+  - url: 'http://192.168.56.40:3100/loki/api/v1/push'
+  - url: 'http://192.168.56.41:3100/loki/api/v1/push'
 profiles::monitoring::promtail::manage_sd_service: true
 profiles::orchestration::consul: true
 profiles::orchestration::consul::config_defaults:
@@ -274,10 +274,10 @@ profiles::tracing::tempo::storage_config_hash:
         queue_depth: 10000
 profiles::website::nginx: true
 profiles::website::nginx::proxies:
-  '192.168.43.42':
+  '192.168.56.42':
     client_max_body_size: 20M
     proxy_url: 'http://grafana.query.consul:3000'
     public_name:
-      - '192.168.43.42'
+      - '192.168.56.42'
       - '%{::ipaddress_eth1}'
 ...

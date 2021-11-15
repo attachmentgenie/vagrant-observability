@@ -5,8 +5,8 @@ vagrant ssh dc1 -c "sudo mysqldump --single-transaction --flush-logs --master-da
 vagrant ssh dc1 -c 'sudo mysql -e "stop slave;"'
 vagrant ssh dc2 -c 'sudo mysql -e "stop slave;"'
 
-vagrant ssh dc1 -c "sudo mysql -e \"CHANGE MASTER TO MASTER_HOST='192.168.43.41', MASTER_USER='repl_user', MASTER_PASSWORD='secret';\""
-vagrant ssh dc2 -c "sudo mysql -e \"CHANGE MASTER TO MASTER_HOST='192.168.43.40', MASTER_USER='repl_user', MASTER_PASSWORD='secret';\""
+vagrant ssh dc1 -c "sudo mysql -e \"CHANGE MASTER TO MASTER_HOST='192.168.56.41', MASTER_USER='repl_user', MASTER_PASSWORD='secret';\""
+vagrant ssh dc2 -c "sudo mysql -e \"CHANGE MASTER TO MASTER_HOST='192.168.56.40', MASTER_USER='repl_user', MASTER_PASSWORD='secret';\""
 
 vagrant ssh dc2 -c "zcat /tmp/vagrant-puppet/environments/grafana.sql.gz | sudo mysql"
 vagrant ssh dc2 -c 'sudo mysql -e "start slave;"'

@@ -1,5 +1,5 @@
 ---
-profiles::alerting::alertmanager::extra_options: '--cluster.advertise-address=%{::ipaddress_eth1}:9094 --cluster.peer=192.168.43.40:9094'
+profiles::alerting::alertmanager::extra_options: '--cluster.advertise-address=%{::ipaddress_eth1}:9094 --cluster.peer=192.168.56.40:9094'
 profiles::bootstrap::keepalive::instances:
   grafana:
     auth_type: 'PASS'
@@ -8,7 +8,7 @@ profiles::bootstrap::keepalive::instances:
     state: 'BACKUP'
     priority: 100
     virtual_router_id: 50
-    virtual_ipaddress: '192.168.43.42/24'
+    virtual_ipaddress: '192.168.56.42/24'
     track_script:
       - check_grafana-server
       - check_nginx
@@ -23,7 +23,7 @@ profiles::monitoring::grafana_agent::tempo_config_hash:
         remote_write:
           - endpoint: '%{::ipaddress_eth1}:55680'
             insecure: true
-          - endpoint: '192.168.43.40:55680'
+          - endpoint: '192.168.56.40:55680'
             insecure: true
 profiles::monitoring::prometheus::scrape_configs:
   - job_name: blackbox
@@ -32,7 +32,7 @@ profiles::monitoring::prometheus::scrape_configs:
     static_configs:
       - targets:
           - '%{::ipaddress_eth1}:9115'
-          - '192.168.43.40:9115'
+          - '192.168.56.40:9115'
         labels:
           dc: 'dc1'
           hostname: '%{::fqdn}'
@@ -150,7 +150,7 @@ profiles::orchestration::consul::config:
   datacenter: dc2
   retry_join_wan:
     - '%{::ipaddress_eth1}'
-    - '192.168.43.40'
+    - '192.168.56.40'
 profiles::orchestration::consul::prepared_queries:
   alertmanager:
     failover_dcs:
