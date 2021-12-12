@@ -39,5 +39,5 @@ nodes:
       synced_folders:
         - src: 'production'
           dst: '/etc/puppetlabs/code/environments/production'
-puppet_version: 6.24.0
+puppet_version: 6.25.1
 virtualbox_group: '/Vagrant/observability'

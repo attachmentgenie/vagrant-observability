@@ -81,6 +81,9 @@ profiles::logging::loki::ingester_config_hash:
       final_sleep: 0s
     chunk_idle_period: 5m
     chunk_retain_period: 30s
+    wal:
+      enabled: true
+      dir: /var/lib/loki/wal
 profiles::logging::loki::limits_config_hash:
   limits_config:
     enforce_metric_name: false
