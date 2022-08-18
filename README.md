@@ -27,13 +27,11 @@ vagrant starter kit
 
 ### (G)UI interfaces
 
-    alertmanager    => alerts.observability.vagrant:9093
-    consul          => consul.observability.vagrant:8500
-    icinga          => alerts.observability.vagrant         icingaadmin:icinga
-    grafana         => grafana.observability.vagrant:3000   admin:secret
-    mailhog         => mailhog.observability.vagrant:8025
-    prometheus      => metrics.observability.vagrant:9090
-    statping        => statping.observability.vagrant:8080  admin:secret
+    alertmanager    => 192.168.56.40:9093, 192.168.56.41:9093
+    consul          => 192.168.56.40:8500, 192.168.56.41:8500
+    grafana         => 192.168.56.42       admin:secret
+    mailhog         => 192.168.56.40:8025, 192.168.56.41:8025
+    prometheus      => 192.168.56.40:9090, 192.168.56.41:9090
 
 ### Exposed Ports
 
@@ -45,9 +43,9 @@ vagrant starter kit
     loki 3100, 9095
     mailhog 1025, 8025
     mysql 3306
-    node_exportert 9100
+    node_exporter 9100
     prometheus 9090
     promtail 9080 38826
-    pushgrateway 9091
+    pushgateway 9091
     statsd_exporter 9102, 9125
     tempo 3200, 4317, 9096, 55680
