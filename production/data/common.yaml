@@ -182,19 +182,12 @@ profiles::metrics::grafana::plugins:
   yesoreyeram-infinity-datasource: {}
   vonage-status-panel: {}
 profiles::monitoring::grafana_agent: true
-profiles::monitoring::grafana_agent::server_config_hash:
-  server:
-    grpc_listen_port: 12346
-    http_listen_port: 12345
 profiles::monitoring::grafana_agent::tempo_config_hash:
   tempo:
     configs:
       - name: default
         receivers:
           zipkin:
-        remote_write:
-          - endpoint: '%{::ipaddress_eth1}:55680'
-            insecure: true
         batch:
           timeout: 5s
           send_batch_size: 100

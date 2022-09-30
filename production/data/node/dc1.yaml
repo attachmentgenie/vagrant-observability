@@ -21,9 +21,9 @@ profiles::monitoring::grafana_agent::tempo_config_hash:
     configs:
       - name: default
         remote_write:
-          - endpoint: '%{::ipaddress_eth1}:55680'
+          - endpoint: '%{::ipaddress_eth1}:4317'
             insecure: true
-          - endpoint: '192.168.56.41:55680'
+          - endpoint: '192.168.56.41:4317'
             insecure: true
 profiles::monitoring::prometheus::alertmanager_configs:
   - static_configs:
